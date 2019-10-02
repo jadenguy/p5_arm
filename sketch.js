@@ -1,3 +1,4 @@
+const segments = 10;
 let a;
 function setup() {
   createCanvas(windowWidth, windowHeight - 4);
@@ -5,15 +6,19 @@ function setup() {
   stroke(220);
   fill(0);
   a = new Arm(width / 2, height / 2);
-  a.Add();
+  for (let index = 0; index < segments; index++) {
+    a.Add();
+  }
 }
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight - 4);
   background(220);
 }
 function draw() {
-  a.Update();
+  a.Update(createVector(mouseX, mouseY));
+  background(220);
   a.Draw();
+  // if (frameCount==100){noLoop();}
 }
 function clamp(num, min, max) {
   return num <= min ? min : num >= max ? max : num;

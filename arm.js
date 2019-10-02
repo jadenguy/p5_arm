@@ -1,36 +1,45 @@
 class Arm {
-    constructor(x = 100, y = 100, len = 100, theta = 0) {
+    constructor(x = 100, y = 100, len = 10, theta = 0) {
         this.origin = createVector(x, y);
-        this.body = createVector(len);
-        this.body.rotate(theta);
+        this._len = len;
+        this._theta = theta;
     }
-    get len() {
-        len = 1;
+    get place() {
+        let place = 1;
         if (this.Child) {
-            len += this.Child.height;
+            place += this.Child.place;
         }
-        return len;
+        return place;
     }
-    Update() {
-        // const mouse = createVector(mouseX, mouseY);
-        print(this.len)
+    get end() {
+        let end = createVector(this._len)
+        end.rotate(this._theta);
+        end.add(this.origin);
+        return end;
+    }
+    Update(position, origin = this.origin) {
+        
+        const delta = p5.Vector.sub(position, origin);
+        const deltaHeading = delta.heading() - this._theta;
+        let sign = 1;
+        // if (delta.mag() / this.place < this._len) {
+            // sign = -1;
+        // }
+        this._theta += deltaHeading / this.place * sign;
+        if (this.Child) {
+            this.Child.origin = this.end;
+            this.Child.Update(position, origin);
+        }
     }
     Draw() {
-        if (this.Child) {
-            this.Child.Draw();
-        }
+        if (this.Child) { this.Child.Draw(); }
         push();
         stroke(color(0));
-        const end = p5.Vector.add(this.origin, this.body);
-        line(this.origin.x, this.origin.y, end.x, end.y);
+        line(this.origin.x, this.origin.y, this.end.x, this.end.y);
         pop();
     }
     Add() {
-        if (!this.Child) {
-            this.Child = new Arm();
-        }
-        else {
-            this.Child.Add();
-        }
+        if (!this.Child) { this.Child = new Arm(this.end.x, this.end.y, this._len); }
+        else { this.Child.Add(); }
     }
 }
