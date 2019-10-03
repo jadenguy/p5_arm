@@ -1,8 +1,10 @@
+let s = 1
 class Arm {
-    constructor(x = 100, y = 100, len = 10, theta = 0) {
+    constructor(x = 100, y = 100, len = 10, theta = 0, domain = TWO_PI) {
         this.origin = createVector(x, y);
         this.len = len;
         this.theta = theta;
+        this.domain = domain;
     }
     get place() {
         let place = 1;
@@ -33,30 +35,28 @@ class Arm {
         }
     }
     Update(pos, origin = this.origin) {
-        // const position = p5.Vector.sub(pos, this.origin);
-        // const joint = p5.Vector.sub(this.tip, 0);
-        // const average = createVector(avg(position.x, joint.x), avg(position.y, joint.y));
-        // this.theta = average.heading();
 
-        // const num = random(100);
-        // if (num < 1) {
-        //     this.theta += QUARTER_PI * (random() - .5);
-        // }
+        const position = p5.Vector.sub(pos, this.origin);
+
+        const joint = p5.Vector.sub(this.tip, this.origin);
+        joint.rotate(-position.heading());
+        this.theta -= (1 / this.place) * joint.heading() * s;
 
         if (this.Child) {
             this.Child.origin = this.end;
-            this.Child.Update(position, origin);
+            this.Child.Update(pos, origin);
         }
     }
     Draw() {
         if (this.Child) { this.Child.Draw(); }
         push();
         stroke(color(0));
+        strokeWeight(this.place);
         line(this.origin.x, this.origin.y, this.end.x, this.end.y);
         pop();
     }
     Add() {
-        if (!this.Child) { this.Child = new Arm(this.end.x, this.end.y, this.len, this.theta); }
+        if (!this.Child) { this.Child = new Arm(this.end.x, this.end.y, this.len, this.theta, this.domain); }
         else { this.Child.Add(); }
     }
 }
