@@ -1,11 +1,11 @@
-const segments = 2;
+const segments = 10;
 let a;
 function setup() {
   createCanvas(windowWidth, windowHeight - 4);
   background(220);
   stroke(220);
   fill(0);
-  a = new Arm(width / 2, height / 2, 100, PI);
+  a = new Arm(width / 2, height / 2, 10, PI);
   for (let index = 1; index < segments; index++) {
     a.Add();
   }

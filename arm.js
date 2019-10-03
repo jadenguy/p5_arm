@@ -8,8 +8,8 @@ class Arm {
     }
     get place() {
         let place = 1;
-        if (this.Child) {
-            place += this.Child.place;
+        if (this.child) {
+            place += this.child.place;
         }
         return place;
     }
@@ -28,8 +28,8 @@ class Arm {
         this._theta = newTheta.heading();
     }
     get tip() {
-        if (this.Child) {
-            return this.Child.tip;
+        if (this.child) {
+            return this.child.tip;
         } else {
             return this.end;
         }
@@ -37,18 +37,29 @@ class Arm {
     Update(pos, origin = this.origin) {
 
         const position = p5.Vector.sub(pos, this.origin);
+        const wantedHeading = p5.Vector.sub(this.tip, this.origin);
+        wantedHeading.rotate(-position.heading());
 
-        const joint = p5.Vector.sub(this.tip, this.origin);
-        joint.rotate(-position.heading());
-        this.theta -= (1 / this.place) * joint.heading() * s;
-
-        if (this.Child) {
-            this.Child.origin = this.end;
-            this.Child.Update(pos, origin);
+        const ratio = (1 / this.place) * clamp(s, 0, 1);
+        this.theta -= ratio * wantedHeading.heading();
+        this.Smooth();
+        if (this.child) {
+            this.child.origin = this.end;
+            this.child.Update(pos, origin);
+        }
+    }
+    Smooth() {
+        if (this.child && this.child.child) {
+            // const dV = createVector(0);
+            // dV.rotate(this.child.theta);
+            // dV.rotate(-this.child.child.theta)
+            // const d = dV.heading() * this.place / 8;
+            // this.theta -= d;
+            // this.child.theta += d;
         }
     }
     Draw() {
-        if (this.Child) { this.Child.Draw(); }
+        if (this.child) { this.child.Draw(); }
         push();
         stroke(color(0));
         strokeWeight(this.place);
@@ -56,8 +67,8 @@ class Arm {
         pop();
     }
     Add() {
-        if (!this.Child) { this.Child = new Arm(this.end.x, this.end.y, this.len, this.theta, this.domain); }
-        else { this.Child.Add(); }
+        if (!this.child) { this.child = new Arm(this.end.x, this.end.y, this.len, this.theta, this.domain); }
+        else { this.child.Add(); }
     }
 }
 function avg(a, b) {
