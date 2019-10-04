@@ -1,4 +1,4 @@
-let s = 1;
+let s = -3;
 class Arm {
     constructor(x = 100, y = 100, len = 10, theta = 0) {
         this.origin = createVector(x, y);
