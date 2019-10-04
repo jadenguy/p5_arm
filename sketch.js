@@ -1,58 +1,32 @@
-const segments = 10;
+const segments = 50;
+const segLen = 10;
 let a;
+
 function setup() {
   createCanvas(windowWidth, windowHeight - 4);
   background(220);
-  stroke(220);
-  fill(0);
-  a = new Arm(width / 2, height / 2, 10, PI);
+  stroke(0);
+  fill(255);
+  a = new Arm(width / 2, height / 2, segLen);
   for (let index = 1; index < segments; index++) {
     a.Add();
   }
 }
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight - 4);
+  a.origin.set(width / 2, height / 2);
   background(220);
 }
 function draw() {
-  a.Update(createVector(mouseX, mouseY));
+  noise(frameCount);
+  const target = createVector(noise(frameCount / 200) * width, noise(10 + frameCount / 200) * height);
+  a.Update(target);
   background(220);
   a.Draw();
-  // if (frameCount==100){noLoop();}
+
+  circle(target.x, target.y, 10);
+
 }
 function clamp(num, min, max) {
   return num <= min ? min : num >= max ? max : num;
 }
-// function mouseWheel(event) {
-//   const wheel = map(event.delta, -500, 500, -1, 1);
-//   mDelta -= wheel;
-//   return false;
-// }
-// function makeList(len = 0) {
-//   const ret = [];
-//   for (let i = 0; i < len; i++) {
-//     const level = [];
-//     const root = Math.pow(2, i);
-//     level.push(root - 1);
-//     ret.push(level);
-//     for (let j = 0; j < i; j++) {
-//       const lastLevel = ret[j];
-//       const lll = lastLevel.length;
-//       for (let k = 0; k < lll; k++) {
-//         const current = lastLevel[k];
-//         lastLevel.push(current + root);
-//       }
-//     }
-//   }
-//   ret.reverse();
-//   return ret.flat();
-// }
-// function sway(cycle = 30., grow = false) {
-//   r = map(Math.sin(frameCount / cycle * PI), -1, 1, 0, 1);
-//   if (grow && ((frameCount - 1) / 2) % cycle == 0) {
-//     background(220);
-//     dOffset = dOffset % 8;
-//     d = map(int(dOffset) % 8, 0, 7, QUARTER_PI, TWO_PI);
-//     dOffset++;
-//   }
-// }

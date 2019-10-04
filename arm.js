@@ -1,10 +1,9 @@
-let s = 1
+let s = 1;
 class Arm {
-    constructor(x = 100, y = 100, len = 10, theta = 0, domain = TWO_PI) {
+    constructor(x = 100, y = 100, len = 10, theta = 0) {
         this.origin = createVector(x, y);
         this.len = len;
-        this.theta = theta;
-        this.domain = domain;
+        this._theta = theta;
     }
     get place() {
         let place = 1;
@@ -35,43 +34,26 @@ class Arm {
         }
     }
     Update(pos, origin = this.origin) {
-
         const position = p5.Vector.sub(pos, this.origin);
         const wantedHeading = p5.Vector.sub(this.end, this.origin);
         wantedHeading.rotate(-position.heading());
-
-        const ratio = (1 / this.place) * clamp(s, 0, 1);
+        const ratio = (1 / this.place) * Math.pow(2, s);
         this.theta -= ratio * wantedHeading.heading();
-        this.Smooth();
         if (this.child) {
             this.child.origin = this.end;
             this.child.Update(pos, origin);
         }
     }
-    Smooth() {
-        if (this.child && this.child.child) {
-            // const dV = createVector(0);
-            // dV.rotate(this.child.theta);
-            // dV.rotate(-this.child.child.theta)
-            // const d = dV.heading() * this.place / 8;
-            // this.theta -= d;
-            // this.child.theta += d;
-        }
-    }
     Draw() {
         if (this.child) { this.child.Draw(); }
         push();
-        stroke(color(0));
-        strokeWeight(this.place);
+        stroke(30);
+        strokeWeight(Math.log2(this.place));
         line(this.origin.x, this.origin.y, this.end.x, this.end.y);
         pop();
     }
     Add() {
-        if (!this.child) { this.child = new Arm(this.end.x, this.end.y, this.len, this.theta, this.domain); }
+        if (!this.child) { this.child = new Arm(this.end.x, this.end.y, this.len, this.theta); }
         else { this.child.Add(); }
     }
-}
-function avg(a, b) {
-    return (a + b) / 2;
-
 }
