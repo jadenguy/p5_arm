@@ -37,7 +37,7 @@ class Arm {
     Update(pos, origin = this.origin) {
 
         const position = p5.Vector.sub(pos, this.origin);
-        const wantedHeading = p5.Vector.sub(this.tip, this.origin);
+        const wantedHeading = p5.Vector.sub(this.end, this.origin);
         wantedHeading.rotate(-position.heading());
 
         const ratio = (1 / this.place) * clamp(s, 0, 1);
